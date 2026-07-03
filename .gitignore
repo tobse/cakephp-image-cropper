@@ -1,0 +1,23 @@
+# Composer
+/vendor/
+/composer.lock
+
+# PHPUnit
+/.phpunit.result.cache
+/.phpunit.cache/
+/phpunit.xml
+/tmp/
+
+# Node / Vite
+/node_modules/
+npm-debug.log*
+
+# Built assets are committed so the plugin works without a node toolchain.
+# Keep the source-of-truth in resources/ and the build output in webroot/.
+
+# Tooling
+/.phpcs-cache
+/.idea/
+/.vscode/
+*.log
+.DS_Store

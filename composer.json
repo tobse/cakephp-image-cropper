@@ -1,0 +1,69 @@
+{
+    "name": "tobse/cakephp-image-cropper",
+    "description": "Standalone CakePHP 5 plugin that adds a client-side image cropper (Cropper.js + Vite) with a FormHelper integration and server-side GD cropping.",
+    "type": "cakephp-plugin",
+    "keywords": [
+        "cakephp",
+        "cakephp-plugin",
+        "image",
+        "cropper",
+        "crop",
+        "upload",
+        "formhelper",
+        "vite"
+    ],
+    "homepage": "https://github.com/tobse/cakephp-image-cropper",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tobias Welz",
+            "role": "Author"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/tobse/cakephp-image-cropper/issues",
+        "source": "https://github.com/tobse/cakephp-image-cropper"
+    },
+    "require": {
+        "php": ">=8.1",
+        "ext-gd": "*",
+        "cakephp/cakephp": "^5.0"
+    },
+    "require-dev": {
+        "cakephp/cakephp-codesniffer": "^5.1",
+        "phpunit/phpunit": "^10.5.5 || ^11.5",
+        "phpstan/phpstan": "^1.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "ImageCropper\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ImageCropper\\Test\\": "tests/",
+            "Cake\\Test\\": "vendor/cakephp/cakephp/tests/"
+        }
+    },
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@stan",
+            "@test"
+        ],
+        "cs-check": "phpcs --colors -p",
+        "cs-fix": "phpcbf --colors -p",
+        "stan": "phpstan analyse",
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-html tmp/coverage"
+    },
+    "config": {
+        "allow-plugins": {
+            "cakephp/plugin-installer": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

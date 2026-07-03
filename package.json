@@ -1,0 +1,18 @@
+{
+  "name": "cakephp-image-cropper",
+  "version": "1.0.0",
+  "description": "Front-end assets (Cropper.js + a framework-free modal) for the CakePHP ImageCropper plugin.",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "cropperjs": "^1.6.2"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}

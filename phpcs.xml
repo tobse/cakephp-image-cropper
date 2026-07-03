@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<ruleset name="ImageCropper">
+    <description>Coding standard for the ImageCropper plugin (CakePHP standard).</description>
+
+    <file>src</file>
+    <file>tests</file>
+
+    <arg name="colors"/>
+    <arg value="nps"/>
+    <arg name="extensions" value="php"/>
+
+    <rule ref="CakePHP"/>
+</ruleset>
