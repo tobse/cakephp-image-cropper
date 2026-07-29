@@ -153,8 +153,101 @@ public function add()
 ```
 
 `process()` returns `true` when a file was cropped and `false` when there was
-nothing to do (no upload or no crop data), so uncropped uploads still pass
-through untouched.
+nothing to do (no upload, no crop data, or an empty/zero-sized crop rectangle —
+e.g. when the user selected a file but cancelled the crop modal), so uncropped
+uploads still pass through untouched.
+
+## Styling & theming
+
+### How the look is defined
+
+The plugin ships **plain CSS only — there is no PHP or JavaScript configuration
+for the appearance, and nothing needs to be configured** to use it. The bundled
+stylesheet `webroot/css/image-cropper.css` contains two parts:
+
+1. The stock [Cropper.js styles](https://github.com/fengyuanchen/cropperjs)
+   (crop box, grid lines, drag handles) — compiled in from
+   `cropperjs/dist/cropper.css`.
+2. The plugin's own modal and button styles, authored in
+   `resources/css/image-cropper.css`.
+
+Every class the plugin creates is prefixed with `ic-`, so the styles never
+collide with your application CSS or a framework like Bootstrap or Tailwind.
+The design is intentionally neutral (white dialog, gray borders, blue primary
+button) and works on any page without further setup. The modal overlay uses
+`z-index: 1080`, which matches Bootstrap's modal layer.
+
+| Class                 | Element                                        |
+|-----------------------|------------------------------------------------|
+| `.ic-modal`           | Full-screen overlay (backdrop)                 |
+| `.ic-modal__dialog`   | The dialog box                                 |
+| `.ic-modal__header`   | Header bar containing title and close button   |
+| `.ic-modal__title`    | Modal heading (`<h2>`)                         |
+| `.ic-modal__close`    | “×” close button                               |
+| `.ic-modal__body`     | Scrollable content area                        |
+| `.ic-modal__stage`    | Container of the image being cropped           |
+| `.ic-modal__image`    | The `<img>` Cropper.js attaches to             |
+| `.ic-modal__preview`  | Live preview pane (when `preview` is enabled)  |
+| `.ic-modal__footer`   | Footer bar containing the action buttons       |
+| `.ic-btn`             | Base button                                    |
+| `.ic-btn--secondary`  | “Cancel” button                                |
+| `.ic-btn--primary`    | “Apply crop” button                            |
+
+### Matching your application's look and feel
+
+**Option A — override the `ic-` classes (recommended).** Keep the plugin's
+stylesheet and layer a few rules in your own CSS on top of it. Because the
+plugin CSS is appended to the `css` view block, it is usually printed *after*
+your application stylesheet — so either load your overrides through the same
+block, or rely on selector specificity (e.g. prefix with `body`). A Bootstrap
+example:
+
+```css
+.ic-btn--primary {
+    background: var(--bs-primary);
+}
+
+.ic-btn--secondary {
+    color: var(--bs-secondary-color);
+    background: var(--bs-secondary-bg);
+    border-color: var(--bs-border-color);
+}
+
+.ic-modal__dialog {
+    border-radius: var(--bs-border-radius-lg);
+    font-family: var(--bs-body-font-family);
+}
+```
+
+This is enough for most projects: the layout of the modal stays as shipped and
+only colors, fonts and radii are adapted.
+
+**Option B — replace the stylesheet entirely.** Disable the automatic asset
+injection and ship your own CSS (and optionally your own JS):
+
+```php
+// src/View/AppView.php
+$this->loadHelper('Form', [
+    'className' => 'ImageCropper.Cropper',
+    'autoInclude' => false,
+]);
+```
+
+With `autoInclude` disabled the helper renders only the form controls; you are
+then responsible for loading **both** the script and a stylesheet yourself,
+including the Cropper.js core styles (`cropperjs/dist/cropper.css`) — without
+them the crop box has no visible frame or handles. The plugin's compiled bundle
+is still available under `/image_cropper/js/image-cropper.js` if you only want
+to swap the CSS:
+
+```php
+// your layout or template
+$this->Html->script('ImageCropper.image-cropper', ['block' => true, 'defer' => true]);
+$this->Html->css('my-cropper-theme', ['block' => true]); // must include the Cropper.js core styles
+```
+
+The markup the script generates (see the class table above) is stable, so a
+custom stylesheet only needs to target the `ic-` classes.
 
 ## Building the front-end assets
 

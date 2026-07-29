@@ -64,7 +64,13 @@ class SaveImageComponent extends Component
         $y = $request->getData($field . $suffixes['y']);
         $width = $request->getData($field . $suffixes['width']);
         $height = $request->getData($field . $suffixes['height']);
-        if ($x === null || $y === null || $width === null || $height === null) {
+        // The helper renders the hidden fields with an empty value; they stay
+        // empty when the user never applies a crop, so anything non-numeric
+        // (or a degenerate rectangle) means "no crop requested".
+        if (!is_numeric($x) || !is_numeric($y) || !is_numeric($width) || !is_numeric($height)) {
+            return false;
+        }
+        if ((int)$width <= 0 || (int)$height <= 0) {
             return false;
         }
 

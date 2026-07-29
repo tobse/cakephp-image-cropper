@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ImageCropper\Utility;
 
+use GdImage;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -94,22 +95,16 @@ class ImageCropper
         $source = $this->createFromFile($sourcePath, $type);
         $canvas = imagecreatetruecolor($width, $height);
         if ($canvas === false) {
-            imagedestroy($source);
             throw new RuntimeException('Unable to allocate the crop canvas.');
         }
         $this->preserveTransparency($canvas, $type);
 
         if (!imagecopy($canvas, $source, 0, 0, $x, $y, $width, $height)) {
-            imagedestroy($source);
-            imagedestroy($canvas);
             throw new RuntimeException('Cropping the image failed.');
         }
 
         $destPath ??= $sourcePath;
         $this->writeToFile($canvas, $destPath, $type);
-
-        imagedestroy($source);
-        imagedestroy($canvas);
 
         return $destPath;
     }
@@ -121,7 +116,7 @@ class ImageCropper
      * @param int $type One of the IMAGETYPE_* constants.
      * @return \GdImage
      */
-    protected function createFromFile(string $path, int $type): \GdImage
+    protected function createFromFile(string $path, int $type): GdImage
     {
         $image = match ($type) {
             IMAGETYPE_JPEG => imagecreatefromjpeg($path),
@@ -144,7 +139,7 @@ class ImageCropper
      * @param int $type One of the IMAGETYPE_* constants.
      * @return void
      */
-    protected function preserveTransparency(\GdImage $canvas, int $type): void
+    protected function preserveTransparency(GdImage $canvas, int $type): void
     {
         if (!in_array($type, [IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_WEBP], true)) {
             return;
@@ -166,7 +161,7 @@ class ImageCropper
      * @return void
      * @throws \RuntimeException When encoding fails.
      */
-    protected function writeToFile(\GdImage $canvas, string $path, int $type): void
+    protected function writeToFile(GdImage $canvas, string $path, int $type): void
     {
         $ok = match ($type) {
             IMAGETYPE_JPEG => imagejpeg($canvas, $path, $this->quality),

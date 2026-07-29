@@ -123,7 +123,6 @@ class ImageCropperTest extends TestCase
         } else {
             imagepng($image, $path);
         }
-        imagedestroy($image);
 
         return $path;
     }

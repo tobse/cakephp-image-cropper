@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace ImageCropper\Test\TestCase\Controller\Component;
 
-use Cake\Controller\Controller;
 use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Controller;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use ImageCropper\Controller\Component\SaveImageComponent;
@@ -68,6 +68,36 @@ class SaveImageComponentTest extends TestCase
         $this->assertSame(80, $width, 'File must be left untouched.');
     }
 
+    public function testProcessReturnsFalseWithEmptyCropData(): void
+    {
+        $path = $this->createImage(80, 80);
+        $component = $this->componentFor([
+            'image_crop_x' => '',
+            'image_crop_y' => '',
+            'image_crop_width' => '',
+            'image_crop_height' => '',
+        ], new UploadedFile($path, filesize($path), UPLOAD_ERR_OK, 'photo.png', 'image/png'));
+
+        $this->assertFalse($component->process('image'));
+        [$width] = getimagesize($path);
+        $this->assertSame(80, $width, 'File must be left untouched.');
+    }
+
+    public function testProcessReturnsFalseWithZeroSizedCropRectangle(): void
+    {
+        $path = $this->createImage(80, 80);
+        $component = $this->componentFor([
+            'image_crop_x' => '0',
+            'image_crop_y' => '0',
+            'image_crop_width' => '0',
+            'image_crop_height' => '0',
+        ], new UploadedFile($path, filesize($path), UPLOAD_ERR_OK, 'photo.png', 'image/png'));
+
+        $this->assertFalse($component->process('image'));
+        [$width] = getimagesize($path);
+        $this->assertSame(80, $width, 'File must be left untouched.');
+    }
+
     public function testProcessReturnsFalseWhenNoFileUploaded(): void
     {
         $path = $this->createImage(80, 80);
@@ -101,7 +131,6 @@ class SaveImageComponentTest extends TestCase
         imagefill($image, 0, 0, imagecolorallocate($image, 10, 200, 90));
         $path = tempnam(sys_get_temp_dir(), 'ic_') . '.png';
         imagepng($image, $path);
-        imagedestroy($image);
         $this->tempFiles[] = $path;
 
         return $path;

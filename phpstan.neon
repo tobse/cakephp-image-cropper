@@ -3,8 +3,3 @@ parameters:
     paths:
         - src
     treatPhpDocTypesAsCertain: false
-    ignoreErrors:
-        # GD functions are declared to return GdImage|false; we guard every call.
-        -
-            message: '#Parameter \#1 \$image of function image[a-z]+ expects GdImage#'
-            path: src/Utility/ImageCropper.php
