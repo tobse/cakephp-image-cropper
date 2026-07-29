@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!--
+  Manual browser test for the built bundle (webroot/js/image-cropper.js).
+
+  Usage:
+    npm run build
+    python3 -m http.server 8000   # from the repo root
+    open http://localhost:8000/tests/manual/test.html
+
+  Click "Inject test image" (or pick a file yourself) — the crop modal must
+  show a draggable crop box with handles, and "Apply crop" must fill the
+  crop fields shown below the input.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ImageCropper manual test</title>
+  <link rel="stylesheet" href="../../webroot/css/image-cropper.css">
+</head>
+<body>
+  <h1>ImageCropper manual test</h1>
+  <p>
+    <input type="file" accept="image/*" data-image-cropper
+           data-cropper-x="crop-x" data-cropper-y="crop-y"
+           data-cropper-width="crop-w" data-cropper-height="crop-h"
+           data-cropper-aspect-ratio="16/9">
+    <button type="button" id="inject">Inject test image</button>
+  </p>
+  <p>
+    Crop result:
+    x=<input type="text" id="crop-x" size="5" readonly>
+    y=<input type="text" id="crop-y" size="5" readonly>
+    w=<input type="text" id="crop-w" size="5" readonly>
+    h=<input type="text" id="crop-h" size="5" readonly>
+  </p>
+  <script src="../../webroot/js/image-cropper.js"></script>
+  <script>
+    // Draw a test image on a canvas, wrap it in a File and inject it into the
+    // input so the cropper opens without a native file dialog.
+    document.getElementById('inject').addEventListener('click', () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 800;
+      canvas.height = 500;
+      const ctx = canvas.getContext('2d');
+      const grad = ctx.createLinearGradient(0, 0, 800, 500);
+      grad.addColorStop(0, '#e74c3c');
+      grad.addColorStop(1, '#3498db');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 800, 500);
+      ctx.fillStyle = '#fff';
+      ctx.font = '48px sans-serif';
+      ctx.fillText('TEST IMAGE', 260, 260);
+      canvas.toBlob((blob) => {
+        const file = new File([blob], 'test.png', { type: 'image/png' });
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        const input = document.querySelector('input[data-image-cropper]');
+        input.files = dt.files;
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      }, 'image/png');
+    });
+  </script>
+</body>
+</html>

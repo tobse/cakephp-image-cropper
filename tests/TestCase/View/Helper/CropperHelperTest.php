@@ -25,6 +25,7 @@ class CropperHelperTest extends TestCase
 
     public function tearDown(): void
     {
+        $this->clearPlugins();
         unset($this->Form, $this->view);
         parent::tearDown();
     }
@@ -94,6 +95,16 @@ class CropperHelperTest extends TestCase
 
         $this->assertStringContainsString('image-cropper.css', $this->view->fetch('css'));
         $this->assertStringContainsString('image-cropper.js', $this->view->fetch('script'));
+    }
+
+    public function testAssetUrlsCarryCacheBustingTimestamp(): void
+    {
+        $this->loadPlugins(['ImageCropper']);
+
+        $this->Form->control('image', ['type' => 'cropper']);
+
+        $this->assertMatchesRegularExpression('/image-cropper\.css\?\d+/', $this->view->fetch('css'));
+        $this->assertMatchesRegularExpression('/image-cropper\.js\?\d+/', $this->view->fetch('script'));
     }
 
     public function testStandardControlTypesStillWork(): void

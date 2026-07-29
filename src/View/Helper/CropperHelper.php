@@ -138,7 +138,16 @@ class CropperHelper extends FormHelper
             return;
         }
         $this->assetsIncluded = true;
-        $this->Html->css('ImageCropper.image-cropper', ['block' => true]);
-        $this->Html->script('ImageCropper.image-cropper', ['block' => true, 'defer' => true]);
+        // 'force' busts browser caches after plugin updates even with debug off.
+        // URLs are built via UrlHelper because HtmlHelper would render the
+        // timestamp option as an HTML attribute.
+        $this->Html->css(
+            $this->Url->css('ImageCropper.image-cropper', ['timestamp' => 'force']),
+            ['block' => true],
+        );
+        $this->Html->script(
+            $this->Url->script('ImageCropper.image-cropper', ['timestamp' => 'force']),
+            ['block' => true, 'defer' => true],
+        );
     }
 }
