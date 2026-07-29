@@ -94,6 +94,7 @@ function openCropper(input, file) {
   const modal = buildModal(title, withPreview);
   document.body.appendChild(modal.overlay);
 
+  modal.image.src = objectUrl;
   const cropper = new Cropper(modal.image, {
     aspectRatio,
     viewMode: 1,
@@ -108,7 +109,6 @@ function openCropper(input, file) {
     modal.overlay.remove();
   };
 
-  modal.image.src = objectUrl;
   modal.applyBtn.addEventListener('click', () => {
     writeCropData(input, cropper.getData(true));
     cleanup();
