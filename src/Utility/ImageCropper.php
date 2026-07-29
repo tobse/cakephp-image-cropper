@@ -89,8 +89,8 @@ class ImageCropper
         // coordinates coming from the browser never produce a corrupt canvas.
         $x = max(0, min($x, $sourceWidth - 1));
         $y = max(0, min($y, $sourceHeight - 1));
-        $width = min($width, $sourceWidth - $x);
-        $height = min($height, $sourceHeight - $y);
+        $width = max(1, min($width, $sourceWidth - $x));
+        $height = max(1, min($height, $sourceHeight - $y));
 
         $source = $this->createFromFile($sourcePath, $type);
         $canvas = imagecreatetruecolor($width, $height);
@@ -99,9 +99,7 @@ class ImageCropper
         }
         $this->preserveTransparency($canvas, $type);
 
-        if (!imagecopy($canvas, $source, 0, 0, $x, $y, $width, $height)) {
-            throw new RuntimeException('Cropping the image failed.');
-        }
+        imagecopy($canvas, $source, 0, 0, $x, $y, $width, $height);
 
         $destPath ??= $sourcePath;
         $this->writeToFile($canvas, $destPath, $type);
