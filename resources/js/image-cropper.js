@@ -25,27 +25,31 @@ function parseAspectRatio(value) {
  *
  * @param {string} title
  * @param {boolean} withPreview
+ * @param {{cancel: string, apply: string, close: string}} labels
  * @returns {{overlay: HTMLElement, image: HTMLImageElement, preview: HTMLElement|null, applyBtn: HTMLElement, cancelEls: HTMLElement[]}}
  */
-function buildModal(title, withPreview) {
+function buildModal(title, withPreview, labels) {
   const overlay = document.createElement('div');
   overlay.className = 'ic-modal';
   overlay.innerHTML = `
     <div class="ic-modal__dialog" role="dialog" aria-modal="true">
       <div class="ic-modal__header">
         <h2 class="ic-modal__title"></h2>
-        <button type="button" class="ic-modal__close" aria-label="Close">&times;</button>
+        <button type="button" class="ic-modal__close">&times;</button>
       </div>
       <div class="ic-modal__body">
         <div class="ic-modal__stage"><img class="ic-modal__image" alt="" /></div>
         ${withPreview ? '<div class="ic-modal__preview"></div>' : ''}
       </div>
       <div class="ic-modal__footer">
-        <button type="button" class="ic-btn ic-btn--secondary" data-ic-cancel>Cancel</button>
-        <button type="button" class="ic-btn ic-btn--primary" data-ic-apply>Apply crop</button>
+        <button type="button" class="ic-btn ic-btn--secondary" data-ic-cancel></button>
+        <button type="button" class="ic-btn ic-btn--primary" data-ic-apply></button>
       </div>
     </div>`;
   overlay.querySelector('.ic-modal__title').textContent = title;
+  overlay.querySelector('.ic-modal__close').setAttribute('aria-label', labels.close);
+  overlay.querySelector('[data-ic-cancel]').textContent = labels.cancel;
+  overlay.querySelector('[data-ic-apply]').textContent = labels.apply;
 
   return {
     overlay,
@@ -89,9 +93,14 @@ function writeCropData(input, data) {
 function openCropper(input, file) {
   const withPreview = input.dataset.cropperPreview !== '0';
   const title = input.dataset.cropperModalTitle || 'Crop image';
+  const labels = {
+    cancel: input.dataset.cropperCancelLabel || 'Cancel',
+    apply: input.dataset.cropperApplyLabel || 'Apply crop',
+    close: input.dataset.cropperCloseLabel || 'Close',
+  };
   const aspectRatio = parseAspectRatio(input.dataset.cropperAspectRatio);
   const objectUrl = URL.createObjectURL(file);
-  const modal = buildModal(title, withPreview);
+  const modal = buildModal(title, withPreview, labels);
   document.body.appendChild(modal.overlay);
 
   modal.image.src = objectUrl;

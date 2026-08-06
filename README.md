@@ -120,11 +120,22 @@ Pass cropper settings under the `options` key:
 | `width`       | int            | —            | Alternative to `aspectRatio`; combined with `height`.   |
 | `height`      | int            | —            | Alternative to `aspectRatio`; combined with `width`.    |
 | `modalTitle`  | string         | `Crop image` | Heading shown in the cropping modal.                    |
+| `cancelLabel` | string         | `Cancel`     | Label of the modal's cancel button.                     |
+| `applyLabel`  | string         | `Apply crop` | Label of the modal's apply button.                      |
+| `closeLabel`  | string         | `Close`      | `aria-label` of the modal's × button.                   |
 | `preview`     | bool           | `true`       | Show a live preview next to the crop area.              |
 | `accept`      | string         | `image/*`    | `accept` attribute of the file input.                   |
 
 All other options are forwarded to the underlying file input (e.g. `label`,
 `class`, `required`).
+
+### Translations
+
+Title and button labels default to translated strings from the `image_cropper`
+domain; a German translation ships with the plugin
+(`resources/locales/de/image_cropper.po`). Add your own locale by providing an
+`image_cropper.po` in your app's `resources/locales/<locale>/` folder, or
+override the labels per field via the options above.
 
 ### In the controller
 

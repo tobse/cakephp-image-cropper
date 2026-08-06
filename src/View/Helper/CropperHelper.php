@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ImageCropper\View\Helper;
 
 use Cake\View\Helper\FormHelper;
+use function Cake\I18n\__d;
 
 /**
  * Cropper form helper.
@@ -59,7 +60,8 @@ class CropperHelper extends FormHelper
      * @param string $fieldName Name of the file field, e.g. `image`.
      * @param array<string, mixed> $options Control options; cropper settings go
      *   under the `options` key (`aspectRatio`, `width`, `height`, `modalTitle`,
-     *   `preview`).
+     *   `cancelLabel`, `applyLabel`, `closeLabel`, `preview`). Title and button
+     *   labels default to translated strings from the `image_cropper` domain.
      * @return string
      */
     public function cropper(string $fieldName, array $options = []): string
@@ -93,9 +95,14 @@ class CropperHelper extends FormHelper
         if ($aspectRatio !== null) {
             $fileOptions['data-cropper-aspect-ratio'] = $aspectRatio;
         }
-        if (isset($cropperOptions['modalTitle'])) {
-            $fileOptions['data-cropper-modal-title'] = (string)$cropperOptions['modalTitle'];
-        }
+        $fileOptions['data-cropper-modal-title'] = (string)($cropperOptions['modalTitle']
+            ?? __d('image_cropper', 'Crop image'));
+        $fileOptions['data-cropper-cancel-label'] = (string)($cropperOptions['cancelLabel']
+            ?? __d('image_cropper', 'Cancel'));
+        $fileOptions['data-cropper-apply-label'] = (string)($cropperOptions['applyLabel']
+            ?? __d('image_cropper', 'Apply crop'));
+        $fileOptions['data-cropper-close-label'] = (string)($cropperOptions['closeLabel']
+            ?? __d('image_cropper', 'Close'));
         if (array_key_exists('preview', $cropperOptions)) {
             $fileOptions['data-cropper-preview'] = $cropperOptions['preview'] ? '1' : '0';
         }

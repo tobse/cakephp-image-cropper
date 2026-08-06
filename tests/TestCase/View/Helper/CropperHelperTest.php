@@ -81,6 +81,28 @@ class CropperHelperTest extends TestCase
         $this->assertStringContainsString('data-cropper-preview="0"', $output);
     }
 
+    public function testLabelsDefaultToTranslatedStrings(): void
+    {
+        $output = $this->Form->control('image', ['type' => 'cropper']);
+
+        $this->assertStringContainsString('data-cropper-modal-title="Crop image"', $output);
+        $this->assertStringContainsString('data-cropper-cancel-label="Cancel"', $output);
+        $this->assertStringContainsString('data-cropper-apply-label="Apply crop"', $output);
+        $this->assertStringContainsString('data-cropper-close-label="Close"', $output);
+    }
+
+    public function testLabelOptionsOverrideTranslatedDefaults(): void
+    {
+        $output = $this->Form->control('image', [
+            'type' => 'cropper',
+            'options' => ['cancelLabel' => 'Nope', 'applyLabel' => 'Yep', 'closeLabel' => 'X'],
+        ]);
+
+        $this->assertStringContainsString('data-cropper-cancel-label="Nope"', $output);
+        $this->assertStringContainsString('data-cropper-apply-label="Yep"', $output);
+        $this->assertStringContainsString('data-cropper-close-label="X"', $output);
+    }
+
     public function testDataAttributesReferenceHiddenFieldIds(): void
     {
         $output = $this->Form->control('image', ['type' => 'cropper']);
